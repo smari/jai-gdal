@@ -31,4 +31,33 @@ main :: () {
 	    print("Pixel Size = (%, %)\n", adfGeoTransform[1], adfGeoTransform[5] );
 	}
 
+
+	// Now let's read some raster bands:
+	hBand: GDALRasterBandH;
+	nBlockXSize, nBlockYSize: int;
+	bGotMin, bGotMax: int;
+	adfMinMax : [2]float64;
+
+	hBand = GDALGetRasterBand(hDataset, 1);
+	GDALGetBlockSize( hBand, *nBlockXSize, *nBlockYSize );
+	print("Block=%dx%d Type=%s, ColorInterp=%s\n",
+        nBlockXSize, nBlockYSize,
+        GDALGetDataTypeName(GDALGetRasterDataType(hBand)),
+        to_string(GDALGetColorInterpretationName(
+            GDALGetRasterColorInterpretation(hBand))) );
+
+	adfMinMax[0] = GDALGetRasterMinimum(hBand, *bGotMin );
+	adfMinMax[1] = GDALGetRasterMaximum(hBand, *bGotMax );
+
+	if !(bGotMin && bGotMax) GDALComputeRasterMinMax( hBand, true, adfMinMax );
+	print( "Min=%, Max=%\n", adfMinMax[0], adfMinMax[1]);
+
+	if GDALGetOverviewCount(hBand) > 0
+		print("Band has %d overviews.\n", GDALGetOverviewCount(hBand));
+	if GDALGetRasterColorTable( hBand ) != null
+    	print( "Band has a color table with %d entries.\n",
+            GDALGetColorEntryCount(GDALGetRasterColorTable(hBand))
+        );
+
+
 }
