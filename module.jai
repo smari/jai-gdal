@@ -19,7 +19,15 @@ GDALDataType :: enum {
     GDT_TypeCount :: 12;          /* maximum type # + 1 */
 }
 
- GDALAsyncStatusType :: enum {
+CPLErr :: enum {
+    CE_None         :: 0;
+    CE_Debug        :: 1;
+    CE_Warning      :: 2;
+    CE_Failure      :: 3;
+    CE_Fatal        :: 4;
+};
+
+GDALAsyncStatusType :: enum {
     GARIO_PENDING	:: 0;
     GARIO_UPDATE	:: 1;
     GARIO_ERROR		:: 2;
@@ -82,6 +90,35 @@ GDALColorInterp :: enum {
     /*! Max current value (equals to GCI_YCbCr_CrBand currently) */ GCI_Max :: 16;
 }
 
+GDALDatasetH                :: *void;
+GDALMajorObjectH            :: *void;
+GDALRasterBandH             :: *void;
+GDALDriverH                 :: *void;
+GDALColorTableH             :: *void;
+GDALRasterAttributeTableH   :: *void;
+GDALAsyncReaderH            :: *void;
+OGRSpatialReferenceH        :: *void;
+GSpacing                    :: s64;
+
+GDALProgressFunc :: #type (dfComplete: float64, pszMessage: *u8, pProgressArg: *void) -> *int;
+
+GDALAllRegister                 :: () #foreign gdal;
+GDALOpen                        :: (pszFilename: *u8, eAccess: GDALAccess) -> GDALDatasetH #must #foreign gdal;
+GDALOpenShared                  :: (pszFilename: *u8, eAccess: GDALAccess) -> GDALDatasetH #must #foreign gdal;
+GDALClose                       :: (handle: GDALDatasetH) #foreign gdal;
+
+GDALGetFileList                 :: (handle: GDALDatasetH) -> **u8 #foreign gdal;
+GDALGetDatasetDriver            :: (handle: GDALDatasetH) -> GDALDriverH #foreign gdal;
+GDALGetRasterXSize              :: (handle: GDALDatasetH) -> int #foreign gdal;
+GDALGetRasterYSize              :: (handle: GDALDatasetH) -> int #foreign gdal;
+GDALGetRasterCount              :: (handle: GDALDatasetH) -> int #foreign gdal;
+
+GDALGetProjectionRef            :: (handle: GDALDatasetH) -> *u8 #foreign gdal;
+GDALGetSpatialRef               :: (handle: GDALDatasetH) -> OGRSpatialReferenceH #foreign gdal;
+GDALSetProjection               :: (handle: GDALDatasetH, proj: *u8) -> CPLErr #foreign gdal;
+GDALSetSpatialRef               :: (handle: GDALDatasetH, ref: OGRSpatialReferenceH) -> CPLErr #foreign gdal;
+GDALGetGeoTransform             :: (handle: GDALDatasetH, trans: *float64) -> CPLErr #foreign gdal;
+GDALSetGeoTransform             :: (handle: GDALDatasetH, trans: *float64) -> CPLErr #foreign gdal;
 
 GDALGetDataTypeSizeBits 		:: (eDataType: GDALDataType) -> int 	#foreign gdal;
 GDALGetDataTypeSizeBytes 		:: (eDataType: GDALDataType) -> int 	#foreign gdal;
@@ -102,6 +139,12 @@ GDALDataTypeIsConversionLossy 	:: (eTypeFrom: GDALDataType, eTypeTo: GDALDataTyp
 GDALGetAsyncStatusTypeName      :: (a: GDALAsyncStatusType) -> *u8 #foreign gdal;
 GDALGetAsyncStatusTypeByName    :: (s: *u8) -> GDALAsyncStatusType #foreign gdal;
 
+
+// These are deprecated, but still available; let's include them for now.
+GDALGetDriverShortName          :: (handle: GDALDriverH) -> *u8 #foreign gdal;
+GDALGetDriverLongName           :: (handle: GDALDriverH) -> *u8 #foreign gdal;
+GDALGetDriverHelpTopic          :: (handle: GDALDriverH) -> *u8 #foreign gdal;
+GDALGetDriverCreationOptionList :: (handle: GDALDriverH) -> *u8 #foreign gdal;
 
 
 #scope_file
