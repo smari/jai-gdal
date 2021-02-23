@@ -20,10 +20,10 @@ main :: () {
 	adfGeoTransform: [6]float64;
 
 	hDriver = GDALGetDatasetDriver(hDataset);
-	print("Driver: %/%\n", GDALGetDriverShortName(hDriver), GDALGetDriverLongName(hDriver));
+	print("Driver: %/%\n", to_string(GDALGetDriverShortName(hDriver)), to_string(GDALGetDriverLongName(hDriver)));
 	print("Size is %x%x%\n", GDALGetRasterXSize(hDataset), GDALGetRasterYSize(hDataset), GDALGetRasterCount(hDataset));
 	if GDALGetProjectionRef(hDataset) != null
-	    print( "Projection is `%'\n", GDALGetProjectionRef(hDataset));
+	    print( "Projection is `%'\n", to_string(GDALGetProjectionRef(hDataset)));
 
 	if GDALGetGeoTransform(hDataset, xx *adfGeoTransform) == .CE_None {
 	    print("Origin = (%, %)\n", adfGeoTransform[0], adfGeoTransform[3] );
