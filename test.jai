@@ -2,12 +2,12 @@
 #import "Basic";
 
 main :: () {
-	print("GDAL test.\n");
- 	hDataset : GDALDatasetH;
+	// First, let's open a dataset:
 
+ 	hDataset : GDALDatasetH;
     GDALAllRegister();
 
-    hDataset = GDALOpen("/home/smari/Projects/TerraFirma/ecopoiesis/data/files.isric.org/soilgrids/latest/data/sand/sand_0-5cm_mean.vrt", .GA_ReadOnly);
+    hDataset = GDALOpen("test.vrt", .GA_ReadOnly);
 
     if hDataset == null {
     	print("Error loading dataset.\n");
@@ -15,6 +15,7 @@ main :: () {
 
     print("Dataset opened!\n");
 
+    // Now let's find something out about that thing:
 
     hDriver: GDALDriverH;
 	adfGeoTransform: [6]float64;
@@ -29,4 +30,5 @@ main :: () {
 	    print("Origin = (%, %)\n", adfGeoTransform[0], adfGeoTransform[3] );
 	    print("Pixel Size = (%, %)\n", adfGeoTransform[1], adfGeoTransform[5] );
 	}
+
 }
