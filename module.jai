@@ -124,7 +124,12 @@ GDALGetProjectionRef            :: (handle: GDALDatasetH) -> *u8 #foreign gdal;
 GDALGetSpatialRef               :: (handle: GDALDatasetH) -> OGRSpatialReferenceH #foreign gdal;
 GDALSetProjection               :: (handle: GDALDatasetH, proj: *u8) -> CPLErr #foreign gdal;
 GDALSetSpatialRef               :: (handle: GDALDatasetH, ref: OGRSpatialReferenceH) -> CPLErr #foreign gdal;
-GDALGetGeoTransform             :: (handle: GDALDatasetH, trans: *float64) -> CPLErr #foreign gdal;
+GDALGetGeoTransform             :: (handle: GDALDatasetH, trans: *float64) -> CPLErr #foreign gdal "GDALGetGeoTransform";
+GDALGetGeoTransform             :: inline (handle: GDALDatasetH) -> [6]float64, CPLErr {
+    transform   : [6]float64;
+    ce := GDALGetGeoTransform(handle, xx *transform);
+    return transform, ce;
+}
 GDALSetGeoTransform             :: (handle: GDALDatasetH, trans: *float64) -> CPLErr #foreign gdal;
 
 // Data types
@@ -212,16 +217,16 @@ GDALSetRasterNoDataValue        :: (band: GDALRasterBandH, ndv: float64) -> CPLE
 GDALDeleteRasterNoDataValue     :: (band: GDALRasterBandH) -> CPLErr #foreign gdal;
 GDALGetRasterCategoryNames      :: (band: GDALRasterBandH) -> **u8 #foreign gdal;
 GDALSetRasterCategoryNames      :: (band: GDALRasterBandH, catnames: CSLConstList) -> CPLErr #foreign gdal;
-GDALGetRasterMinimum__          :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal "GDALGetRasterMinimum";
+GDALGetRasterMinimum            :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal "GDALGetRasterMinimum";
 GDALGetRasterMinimum            :: inline (band: GDALRasterBandH) -> float64, int {
     r: int;
-    m := GDALGetRasterMinimum__(band, *r);
+    m := GDALGetRasterMinimum(band, *r);
     return m, r;
 }
-GDALGetRasterMaximum__          :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal "GDALGetRasterMaximum";
+GDALGetRasterMaximum            :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal "GDALGetRasterMaximum";
 GDALGetRasterMaximum            :: inline (band: GDALRasterBandH) -> float64, int {
     r: int;
-    m := GDALGetRasterMaximum__(band, *r);
+    m := GDALGetRasterMaximum(band, *r);
     return m, r;
 }
 
