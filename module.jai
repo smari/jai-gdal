@@ -27,6 +27,8 @@ CPLErr :: enum {
     CE_Fatal        :: 4;
 };
 
+CPLErrorNum :: s32;
+
 GDALAsyncStatusType :: enum {
     GARIO_PENDING   :: 0;
     GARIO_UPDATE    :: 1;
@@ -160,6 +162,13 @@ GDALDerivedPixelFunc            :: #type *(papoSources: *void, nSources: int, pD
 
 GDALGetRasterDataType           :: (band: GDALRasterBandH) -> GDALDataType #foreign gdal;
 GDALGetBlockSize                :: (band: GDALRasterBandH, pnXSize: *int, pnYSize: *int) #foreign gdal;
+
+GDALGetBlockSize                :: (band: GDALRasterBandH) -> (int, int) {
+    xs, ys : int;
+    GDALGetBlockSize( band, *xs, *ys );
+    return xs, ys;
+}
+
 GDALGetActualBlockSize          :: (band: GDALRasterBandH, nXBlockOff: int, nYBlockOff: int, pnXValid: *int, pnYValid: *int) -> CPLErr #foreign gdal;
 GDALRasterAdviseRead            :: (band: GDALRasterBandH, nDSXOff: int, nDSYOff: int, nDSXSize: int, nDSYSize: int,
                                     nBXSize: int, nBYSize: int, eBDataType: GDALDataType, papszOptions: CSLConstList) -> CPLErr #foreign gdal;
@@ -213,7 +222,7 @@ GDALGetRasterOffset             :: (band: GDALRasterBandH, pbSuccess: *int) -> f
 GDALSetRasterOffset             :: (band: GDALRasterBandH, dfNewOffset: float64) -> CPLErr #foreign gdal;
 GDALGetRasterScale              :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal;
 GDALSetRasterScale              :: (band: GDALRasterBandH, dfNewOffset: float64) -> CPLErr #foreign gdal;
-GDALComputeRasterMinMax         :: (band: GDALRasterBandH, bApproxOK: bool, adfMinMax: [2]float64) #foreign gdal;
+GDALComputeRasterMinMax         :: (band: GDALRasterBandH, bApproxOK: bool, adfMinMax: *float64) #foreign gdal;
 GDALFlushRasterCache            :: (band: GDALRasterBandH) -> CPLErr #foreign gdal;
 
 /* @todo
@@ -316,7 +325,8 @@ GDALSetColorEntry               :: (cth: GDALColorTableH, id: int, ce: *GDALColo
 GDALCreateColorRamp             :: (cth: GDALColorTableH, nStartIndex: int, 
                                 psStartColor: GDALColorEntry, nEndIndex: int, psEndColor: *GDALColorEntry)  #foreign gdal;
 
-
+CPLErrorHandler :: #type (c: CPLErr, n: CPLErrorNum, e: *u8) -> void #c_call;
+CPLSetErrorHandler :: (callback: CPLErrorHandler) -> CPLErrorHandler #foreign gdal;
 
 #scope_file
 

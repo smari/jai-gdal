@@ -7,7 +7,7 @@ main :: () {
     hDataset : GDALDatasetH;
     GDALAllRegister();
 
-    hDataset = GDALOpen("test.vrt", .GA_ReadOnly);
+    hDataset = GDALOpen("test.vrt.ovr", .GA_ReadOnly);
 
     if hDataset == null {
         print("Error loading dataset.\n");
@@ -59,5 +59,11 @@ main :: () {
             GDALGetColorEntryCount(GDALGetRasterColorTable(hBand))
         );
 
+    // And now for some data reading:
+    nXSize := GDALGetRasterBandXSize(hBand);
+    pafScanline: *float32 = alloc(size_of(float)*nXSize);
+    GDALRasterIO(hBand, .GF_Read, 0, 0, nXSize, 1, pafScanline, nXSize, 1, .GDT_Float32, 0, 0);
 
+    // All done here.
+    GDALClose(hDataset);
 }
