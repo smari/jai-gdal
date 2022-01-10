@@ -49,7 +49,7 @@ main :: () {
     adfMinMax[0] = GDALGetRasterMinimum(hBand, *bGotMin );
     adfMinMax[1] = GDALGetRasterMaximum(hBand, *bGotMax );
 
-    if !(bGotMin && bGotMax) GDALComputeRasterMinMax( hBand, true, adfMinMax );
+    if !(bGotMin && bGotMax) GDALComputeRasterMinMax( hBand, true, xx *adfMinMax );
     print( "Min=%, Max=%\n", adfMinMax[0], adfMinMax[1]);
 
     if GDALGetOverviewCount(hBand) > 0
