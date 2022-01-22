@@ -179,7 +179,6 @@ GDALDerivedPixelFunc            :: #type *(papoSources: *void, nSources: int, pD
 
 GDALGetRasterDataType           :: (band: GDALRasterBandH) -> GDALDataType #foreign gdal;
 GDALGetBlockSize                :: (band: GDALRasterBandH, pnXSize: *int, pnYSize: *int) #foreign gdal;
-
 GDALGetBlockSize                :: (band: GDALRasterBandH) -> (int, int) {
     xs, ys : int;
     GDALGetBlockSize( band, *xs, *ys );
@@ -189,15 +188,30 @@ GDALGetBlockSize                :: (band: GDALRasterBandH) -> (int, int) {
 GDALGetActualBlockSize          :: (band: GDALRasterBandH, nXBlockOff: int, nYBlockOff: int, pnXValid: *int, pnYValid: *int) -> CPLErr #foreign gdal;
 GDALRasterAdviseRead            :: (band: GDALRasterBandH, nDSXOff: int, nDSYOff: int, nDSXSize: int, nDSYSize: int,
                                     nBXSize: int, nBYSize: int, eBDataType: GDALDataType, papszOptions: CSLConstList) -> CPLErr #foreign gdal;
-GDALRasterIO                    :: (band: GDALRasterBandH, eRWFlag: GDALRWFlag, 
-              nDSXOff: int, nDSYOff: int, nDSXSize: int, nDSYSize: int,
-              pBuffer: *void, nBXSize: int, nBYSize: int, eBDataType: GDALDataType,
-              nPixelSpace: int, nLineSpace: int) -> CPLErr #foreign gdal;
-GDALRasterIOEx                  :: (band: GDALRasterBandH, eRWFlag: GDALRWFlag, 
-              nDSXOff: int, nDSYOff: int, nDSXSize: int, nDSYSize: int,
-              pBuffer: *void, nBXSize: int, nBYSize: int, eBDataType: GDALDataType,
-              nPixelSpace: int, nLineSpace: int,
-              psExtraArg: *GDALRasterIOExtraArg) -> CPLErr #must #foreign gdal;
+GDALRasterIO                    :: (
+    band: GDALRasterBandH, eRWFlag: GDALRWFlag, 
+    nDSXOff: int, nDSYOff: int, nDSXSize: int, nDSYSize: int,
+    pBuffer: *void, nBXSize: int, nBYSize: int, eBDataType: GDALDataType,
+    nPixelSpace: int, nLineSpace: int
+    ) -> CPLErr #foreign gdal;
+GDALRasterIOEx                  :: (
+    band: GDALRasterBandH, eRWFlag: GDALRWFlag, 
+    nDSXOff: int, nDSYOff: int, nDSXSize: int, nDSYSize: int,
+    pBuffer: *void, nBXSize: int, nBYSize: int, eBDataType: GDALDataType,
+    nPixelSpace: int, nLineSpace: int,
+    psExtraArg: *GDALRasterIOExtraArg
+    ) -> CPLErr #must #foreign gdal;
+GDALDatasetRasterIO             :: (
+    hDS: GDALDatasetH, 
+    eRWFlag: GDALRWFlag, 
+    nDSXOff: s32,       nDSYOff: s32, 
+    nDSXSize: s32,      nDSYSize: s32, 
+    pBuffer: *void, 
+    nBXSize: s32,       nBYSize: s32, 
+    eBDataType: GDALDataType, 
+    nBandCount: s32,    panBandCount: *s32, 
+    nPixelSpace: s32,   nLineSpace: s32,    nBandSpace: s32
+) -> CPLErr #foreign gdal;
 GDALReadBlock                   :: (band: GDALRasterBandH, a: int, b: int, c: *void) -> CPLErr #must #foreign gdal;
 GDALWriteBlock                  :: (band: GDALRasterBandH, a: int, b: int, c: *void) -> CPLErr #must #foreign gdal;
 GDALGetRasterBandXSize          :: (band: GDALRasterBandH) -> int #foreign gdal;
