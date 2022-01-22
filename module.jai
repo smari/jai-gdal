@@ -134,7 +134,10 @@ GDALDataTypeIsComplex           :: (eDataType: GDALDataType) -> int     #foreign
 GDALDataTypeIsInteger           :: (eDataType: GDALDataType) -> int     #foreign gdal;
 GDALDataTypeIsFloating          :: (eDataType: GDALDataType) -> int     #foreign gdal;
 GDALDataTypeIsSigned            :: (eDataType: GDALDataType) -> int     #foreign gdal;
-GDALGetDataTypeName             :: (eDataType: GDALDataType) -> *u8     #foreign gdal;
+GDALGetDataTypeName__           :: (eDataType: GDALDataType) -> *u8     #foreign gdal "GDALGetDataTypeName";
+GDALGetDataTypeName             :: inline (eDataType: GDALDataType) -> string {
+    return to_string(GDALGetDataTypeName__(eDataType));
+}
 GDALGetDataTypeByName           :: (s: *u8) -> GDALDataType             #foreign gdal;
 GDALDataTypeUnion               :: (a: GDALDataType, b: GDALDataType) -> GDALDataType   #foreign gdal;
 GDALDataTypeUnionWithValue      :: (eDT: GDALDataType, dValue: float, bComplex: int) -> GDALDataType     #foreign gdal;
@@ -147,13 +150,22 @@ GDALDataTypeIsConversionLossy   :: (eTypeFrom: GDALDataType, eTypeTo: GDALDataTy
 GDALGetAsyncStatusTypeName      :: (a: GDALAsyncStatusType) -> *u8 #foreign gdal;
 GDALGetAsyncStatusTypeByName    :: (s: *u8) -> GDALAsyncStatusType #foreign gdal;
 
-
 // Driver info
 // @note: These are deprecated, but still available; let's include them for now.
-GDALGetDriverShortName          :: (handle: GDALDriverH) -> *u8 #foreign gdal;
-GDALGetDriverLongName           :: (handle: GDALDriverH) -> *u8 #foreign gdal;
+GDALGetDriverShortName__        :: (handle: GDALDriverH) -> *u8 #foreign gdal "GDALGetDriverShortName";
+GDALGetDriverShortName          :: inline (handle: GDALDriverH) -> string {
+    return to_string(GDALGetDriverShortName__(handle));
+}
+
+GDALGetDriverLongName__         :: (handle: GDALDriverH) -> *u8 #foreign gdal "GDALGetDriverLongName";
+GDALGetDriverLongName           :: inline (handle: GDALDriverH) -> string {
+    return to_string(GDALGetDriverLongName__(handle));
+}
+
 GDALGetDriverHelpTopic          :: (handle: GDALDriverH) -> *u8 #foreign gdal;
 GDALGetDriverCreationOptionList :: (handle: GDALDriverH) -> *u8 #foreign gdal;
+GDALGetDriver                   :: (i: u32) -> GDALDriverH #foreign gdal;
+GDALGetDriverCount              :: () -> u32 #foreign gdal;
 
 
 // Raster band - one band/channel in a dataset
@@ -200,8 +212,18 @@ GDALSetRasterNoDataValue        :: (band: GDALRasterBandH, ndv: float64) -> CPLE
 GDALDeleteRasterNoDataValue     :: (band: GDALRasterBandH) -> CPLErr #foreign gdal;
 GDALGetRasterCategoryNames      :: (band: GDALRasterBandH) -> **u8 #foreign gdal;
 GDALSetRasterCategoryNames      :: (band: GDALRasterBandH, catnames: CSLConstList) -> CPLErr #foreign gdal;
-GDALGetRasterMinimum            :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal;
-GDALGetRasterMaximum            :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal;
+GDALGetRasterMinimum__          :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal "GDALGetRasterMinimum";
+GDALGetRasterMinimum            :: inline (band: GDALRasterBandH) -> float64, int {
+    r: int;
+    m := GDALGetRasterMinimum__(band, *r);
+    return m, r;
+}
+GDALGetRasterMaximum__          :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal "GDALGetRasterMaximum";
+GDALGetRasterMaximum            :: inline (band: GDALRasterBandH) -> float64, int {
+    r: int;
+    m := GDALGetRasterMaximum__(band, *r);
+    return m, r;
+}
 
 /* @todo
 CPLErr CPL_DLL CPL_STDCALL GDALGetRasterStatistics(
@@ -216,7 +238,10 @@ CPLErr CPL_DLL CPL_STDCALL GDALSetRasterStatistics(
     float64 dfMin, float64 dfMax, float64 dfMean, float64 dfStdDev );
 
 */
-GDALGetRasterUnitType           :: (band: GDALRasterBandH) -> *u8 #foreign gdal;
+GDALGetRasterUnitType__         :: (band: GDALRasterBandH) -> *u8 #foreign gdal "GDALGetRasterUnitType";
+GDALGetRasterUnitType           :: inline (band: GDALRasterBandH) -> string { 
+    return to_string(GDALGetRasterUnitType__(band));
+}
 GDALSetRasterUnitType           :: (band: GDALRasterBandH, pszNewValue: *u8) -> CPLErr #foreign gdal;
 GDALGetRasterOffset             :: (band: GDALRasterBandH, pbSuccess: *int) -> float64 #foreign gdal;
 GDALSetRasterOffset             :: (band: GDALRasterBandH, dfNewOffset: float64) -> CPLErr #foreign gdal;
@@ -289,7 +314,10 @@ CPLErr CPL_DLL CPL_STDCALL
 */
 
 
-GDALGetColorInterpretationName   :: (colorinterp: GDALColorInterp) -> *u8 #foreign gdal;
+GDALGetColorInterpretationName__ :: (colorinterp: GDALColorInterp) -> *u8 #foreign gdal "GDALGetColorInterpretationName";
+GDALGetColorInterpretationName   :: inline (colorinterp: GDALColorInterp) -> string {
+    return to_string(GDALGetColorInterpretationName__(colorinterp));
+}
 GDALGetColorInterpretationByName :: (pszName: *u8) -> GDALColorInterp #foreign gdal;
 
 
@@ -331,3 +359,5 @@ CPLSetErrorHandler :: (callback: CPLErrorHandler) -> CPLErrorHandler #foreign gd
 #scope_file
 
 gdal :: #foreign_system_library "libgdal";
+
+#import "Basic";

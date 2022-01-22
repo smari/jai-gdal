@@ -11,6 +11,7 @@ main :: () {
 
     if hDataset == null {
         print("Error loading dataset.\n");
+        exit(0);
     }       
 
     print("Dataset opened!\n");
@@ -21,7 +22,7 @@ main :: () {
     adfGeoTransform: [6]float64;
 
     hDriver = GDALGetDatasetDriver(hDataset);
-    print("Driver: %/%\n", to_string(GDALGetDriverShortName(hDriver)), to_string(GDALGetDriverLongName(hDriver)));
+    print("Driver: %/%\n", GDALGetDriverShortName(hDriver), GDALGetDriverLongName(hDriver));
     print("Size is %x%x%\n", GDALGetRasterXSize(hDataset), GDALGetRasterYSize(hDataset), GDALGetRasterCount(hDataset));
     if GDALGetProjectionRef(hDataset) != null
         print("Projection is `%'\n", to_string(GDALGetProjectionRef(hDataset)));
@@ -33,23 +34,21 @@ main :: () {
 
 
     // Now let's read some raster bands:
-    hBand: GDALRasterBandH;
-    nBlockXSize, nBlockYSize: int;
     bGotMin, bGotMax: int;
     adfMinMax : [2]float64;
 
-    hBand = GDALGetRasterBand(hDataset, 1);
-    GDALGetBlockSize( hBand, *nBlockXSize, *nBlockYSize );
+    hBand := GDALGetRasterBand(hDataset, 1);
+    nBlockXSize, nBlockYSize := GDALGetBlockSize(hBand);
     print("Block=%x% Type=%, ColorInterp=%\n",
         nBlockXSize, nBlockYSize,
-        to_string(GDALGetDataTypeName(GDALGetRasterDataType(hBand))),
-        to_string(GDALGetColorInterpretationName(
-            GDALGetRasterColorInterpretation(hBand))) );
+        GDALGetDataTypeName(GDALGetRasterDataType(hBand)),
+        GDALGetColorInterpretationName(
+            GDALGetRasterColorInterpretation(hBand)) );
 
-    adfMinMax[0] = GDALGetRasterMinimum(hBand, *bGotMin );
-    adfMinMax[1] = GDALGetRasterMaximum(hBand, *bGotMax );
+    adfMinMax[0], bGotMin = GDALGetRasterMinimum(hBand);
+    adfMinMax[1], bGotMax = GDALGetRasterMaximum(hBand);
 
-    if !(bGotMin && bGotMax) GDALComputeRasterMinMax( hBand, true, xx *adfMinMax );
+    if !(bGotMin && bGotMax) GDALComputeRasterMinMax( hBand, true, adfMinMax.data );
     print( "Min=%, Max=%\n", adfMinMax[0], adfMinMax[1]);
 
     if GDALGetOverviewCount(hBand) > 0
